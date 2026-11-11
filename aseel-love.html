@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aseel ❤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+  html,body{height:100%}
+  body{
+    font-family:'Quicksand',system-ui,sans-serif;
+    color:#f6eef3;
+    overflow-x:hidden;
+    background:#5a4272;
+  }
+  body::before{
+    content:'';position:fixed;inset:0;z-index:-2;
+    background:radial-gradient(ellipse at 50% 45%,#80619a 0%,#62467d 55%,#402d58 100%);
+  }
+  #bg{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  .star{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.25;animation:tw 4s ease-in-out infinite alternate}
+  @keyframes tw{from{opacity:.08}to{opacity:.55}}
+
+  section{
+    height:100vh;height:100dvh;
+    scroll-snap-align:start;
+    position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+  }
+
+  /* ---------- section 1: the top sentence, alone ---------- */
+  #s1 .top{
+    max-width:min(88vw,780px);
+    font-weight:300;
+    font-size:clamp(1.15rem,3.6vmin,2rem);
+    letter-spacing:.1em;line-height:1.9;
+    color:#fbeaf1;
+    text-shadow:0 2px 20px rgba(0,0,0,.25);
+    opacity:0;animation:soft 4s ease .6s forwards;
+  }
+  #cue{
+    position:absolute;bottom:5vh;left:50%;transform:translateX(-50%);
+    background:none;border:none;color:#fff;cursor:pointer;
+    font:inherit;font-size:.82rem;letter-spacing:.2em;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    opacity:0;animation:softCue 2s ease 3.5s forwards;
+  }
+  #cue span.arrow{font-size:1.5rem;animation:bob 2.2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  @keyframes soft{from{opacity:0;transform:translateY(10px)}to{opacity:.92;transform:none}}
+  @keyframes softCue{from{opacity:0}to{opacity:.9}}
+
+  /* ---------- section 2: heart + name + bottom sentence ---------- */
+  #stage{position:relative;width:var(--S);height:var(--S);flex:none}
+
+  .w{
+    position:absolute;white-space:nowrap;
+    transform:translate(-50%,-50%);
+    font-weight:400;
+    color:var(--c);
+    opacity:0;
+  }
+  .w.big{
+    font-weight:700;color:#fff;
+    text-shadow:0 0 10px rgba(255,255,255,.35);
+  }
+  #s2.in .w{
+    animation:
+      appear 2.6s ease var(--d) forwards,
+      drift var(--t) ease-in-out calc(var(--d) + 2.6s) infinite;
+  }
+  #s2.in .w.big{animation-name:appear,driftBig}
+  @keyframes appear{
+    from{opacity:0;transform:translate(-50%,-30%) scale(.85);filter:blur(3px)}
+    to{opacity:var(--o);transform:translate(-50%,-50%) scale(1);filter:blur(0)}
+  }
+  @keyframes drift{0%,100%{opacity:var(--o)}50%{opacity:calc(var(--o) * .62)}}
+  @keyframes driftBig{0%,100%{opacity:1}50%{opacity:.8}}
+
+  #name{
+    position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    letter-spacing:.01em;
+    font-size:calc(var(--S) * .16);
+    line-height:1;color:#fff;
+    text-shadow:0 4px 30px rgba(60,20,70,.55);
+    opacity:0;z-index:3;
+  }
+  #s2.in #name{animation:nameIn 3.5s ease var(--nameDelay) forwards}
+  @keyframes nameIn{from{opacity:0;filter:blur(8px);transform:translate(-50%,-50%) scale(.92)}to{opacity:1;filter:blur(0);transform:translate(-50%,-50%) scale(1)}}
+
+  #s2 .bottom{
+    max-width:min(90vw,720px);
+    margin-top:1.4vh;
+    font-weight:400;
+    font-size:clamp(.82rem,2.1vmin,1.05rem);
+    letter-spacing:.1em;line-height:1.7;
+    color:#fbeaf1;
+    opacity:0;
+  }
+  #s2 .bottom b{font-weight:600;color:#ffd0de}
+  #s2.in .bottom{animation:soft 3.5s ease var(--bottomDelay) forwards}
+
+  #hint{
+    position:fixed;left:50%;bottom:12px;transform:translateX(-50%);
+    font-size:.72rem;letter-spacing:.14em;color:rgba(255,255,255,.55);
+    opacity:0;animation:softCue 2s ease 5s forwards;
+    transition:opacity .8s;pointer-events:none;z-index:5;
+  }
+  #hint.gone{opacity:0 !important;animation:none}
+
+  #mute{
+    position:fixed;right:14px;top:14px;z-index:10;
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:#fff;
+    font-size:16px;cursor:pointer;
+  }
+  #yt{position:fixed;left:-9999px;top:0;width:200px;height:200px}
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<button id="mute" title="sound">🔇</button>
+<div id="yt"></div>
+<div id="hint">tap anywhere for sound ♡</div>
+
+<!-- section 1: the top sentence, by itself -->
+<section id="s1">
+  <div class="top">sunrise and my love for you things that donot change every morning</div>
+  <button id="cue" aria-label="continue"><span>tap to continue</span><span class="arrow">↓</span></button>
+</section>
+
+<!-- section 2: heart + name + the bottom sentence, together -->
+<section id="s2">
+  <div id="stage"><div id="name">Aseel</div></div>
+  <div class="bottom">To day is <b>11-11</b> the 11th day of the 11th month and my wish will always be you</div>
+</section>
+
+<script>
+const LOVE = [
+  "Ek is lief vir jou",
+  "Të dua",
+  "እወድሻለሁ",
+  "Ես քեզ սիրում եմ",
+  "Səni sevirəm",
+  "Maite zaitut",
+  "Я цябе кахаю",
+  "আমি তোমাকে ভালোবাসি",
+  "Volim te",
+  "Обичам те",
+  "ချစ်တယ်",
+  "T'estimo",
+  "Gihigugma tika",
+  "我爱你",
+  "我愛你",
+  "Miluji tě",
+  "Jeg elsker dig",
+  "Ik hou van jou",
+  "Mi amas vin",
+  "Ma armastan sind",
+  "Mahal kita",
+  "Minä rakastan sinua",
+  "Je t'aime",
+  "Quérote",
+  "მიყვარხარ",
+  "Ich liebe dich",
+  "Σ'αγαπώ",
+  "હું તને પ્રેમ કરું છું",
+  "Mwen renmen w",
+  "Ina son ka",
+  "Aloha au iā ʻoe",
+  "אני אוהב אותך",
+  "मुझे तुमसे प्यार है",
+  "Szeretlek",
+  "Ég elska þig",
+  "Ahụrụ m gị n'anya",
+  "Aku cinta kamu",
+  "Tá grá agam duit",
+  "Ti amo",
+  "愛してる",
+  "Aku tresno karo kowe",
+  "ನಾನು ನಿನ್ನನ್ನು ಪ್ರೀತಿಸುತ್ತೇನೆ",
+  "Мен сені сүйемін",
+  "ខ្ញុំស្រលាញ់អ្នក",
+  "사랑해",
+  "Ez te hez dikim",
+  "Мен сени сүйөм",
+  "ຂ້ອຍຮັກເຈົ້າ",
+  "Te amo",
+  "Es tevi mīlu",
+  "Aš tave myliu",
+  "Ech hunn dech gär",
+  "Те сакам",
+  "Tia anao aho",
+  "Saya cintakan awak",
+  "ഞാൻ നിന്നെ സ്നേഹിക്കുന്നു",
+  "Inħobbok",
+  "E aroha ana au ki a koe",
+  "माझे तुझ्यावर प्रेम आहे",
+  "Би чамд хайртай",
+  "म तिमीलाई माया गर्छु",
+  "Jeg elsker deg",
+  "زه تا سره مینه لرم",
+  "دوستت دارم",
+  "Kocham cię",
+  "Eu te amo",
+  "ਮੈਂ ਤੈਨੂੰ ਪਿਆਰ ਕਰਦਾ ਹਾਂ",
+  "Te iubesc",
+  "Я тебя люблю",
+  "Ou te alofa ia te oe",
+  "Tha gaol agam ort",
+  "Волим те",
+  "Ndinokuda",
+  "مان توکي پيار ڪريان ٿو",
+  "මම ඔබට ආදරෙයි",
+  "Ľúbim ťa",
+  "Ljubim te",
+  "Waan ku jecelahay",
+  "Te quiero",
+  "Abdi bogoh ka anjeun",
+  "Nakupenda",
+  "Jag älskar dig",
+  "Ман туро дӯст медорам",
+  "நான் உன்னை காதலிக்கிறேன்",
+  "నేను నిన్ను ప్రేమిస్తున్నాను",
+  "ฉันรักเธอ",
+  "Seni seviyorum",
+  "Men seni söýýärin",
+  "Я тебе кохаю",
+  "مجھے تم سے محبت ہے",
+  "Seni sevaman",
+  "Anh yêu em",
+  "Rwy'n dy garu di",
+  "Ndiyakuthanda",
+  "איך האב דיך ליב",
+  "Mo nifẹ rẹ",
+  "Ngiyakuthanda",
+  "Мин сине яратам",
+  "Munayki",
+  "Da garout a ran",
+  "Ti tengu cara",
+  "Ik hâld fan dy",
+  "Eg elski teg",
+  "T'aimi",
+  "أحبك"
+];
+const MAINS = ["بحبك","I love you"];
+const COLORS = ["#ffffff","#ffffff","#f6e6ef","#ffc2d4","#ffb0c8","#f3d9e8","#ffd7e3"];
+
+const stage = document.getElementById('stage');
+const s2 = document.getElementById('s2');
+const FONT = 'Quicksand, system-ui, sans-serif';
+const measureCtx = document.createElement('canvas').getContext('2d');
+const mw = (txt,size,wt)=>{ measureCtx.font = `${wt} ${size}px ${FONT}`; return measureCtx.measureText(txt).width; };
+
+/* little stars */
+(function(){
+  const bg=document.getElementById('bg');
+  for(let i=0;i<40;i++){
+    const d=document.createElement('div'); d.className='star';
+    d.style.left=Math.random()*100+'%'; d.style.top=Math.random()*100+'%';
+    d.style.animationDelay=(Math.random()*4)+'s';
+    bg.appendChild(d);
+  }
+})();
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+
+/* is a point inside the heart? (implicit heart curve, scaled to the stage) */
+function inHeart(x,y,S){
+  const unit=S/2.4;
+  const u=(x-S/2)/unit, v=(S*0.5-y)/unit+0.08;
+  const a=u*u+v*v-1;
+  return a*a*a - u*u*v*v*v < 0;
+}
+
+/* fill the heart row by row; every row is justified so the outline stays clean and nothing overlaps */
+function computeLayout(S, nameW, nameSize){
+  const base = Math.max(9, S*0.0142);
+  const mainSize = base*1.22;
+  const rowH = base*1.62;
+  const hole = {x0:S/2-nameW/2-base*1.1, x1:S/2+nameW/2+base*1.1, y:S*0.47, h:nameSize*1.0};
+
+  const wid = {}; LOVE.forEach(t=>wid[t]=mw(t,base,400));
+  let queue=[], placedCount=0, mainIdx=0;
+  const refill=()=>{ queue = queue.concat(shuffle(LOVE.slice())); };
+  refill();
+
+  function takeWord(remaining){
+    if(queue.length<24) refill();
+    if(placedCount%6===5){                              // every 6th word is one of the two main phrases
+      const m=MAINS[mainIdx%2], w=mw(m,mainSize,700);
+      if(w<=remaining){ mainIdx++; placedCount++; return {txt:m,w,size:mainSize,main:true}; }
+    }
+    for(let i=0;i<queue.length && i<16;i++){
+      const t=queue[i];
+      if(wid[t]<=remaining){ queue.splice(i,1); placedCount++; return {txt:t,w:wid[t],size:base,main:false}; }
+    }
+    return null;
+  }
+
+  const out=[];
+  function fillSegment(x0,x1,y){
+    const W=x1-x0; if(W<base*3) return;
+    const gapMin=base*0.8, items=[]; let used=0;
+    for(;;){
+      const rem=W-used-(items.length?gapMin:0);
+      const it=takeWord(rem); if(!it) break;
+      used+=it.w+(items.length?gapMin:0); items.push(it);
+    }
+    if(!items.length) return;
+    const sumW=items.reduce((a,i)=>a+i.w,0);
+    let gap=items.length>1?(W-sumW)/(items.length-1):0;
+    gap=Math.min(gap,base*2.8);
+    const total=sumW+gap*(items.length-1);
+    let x=x0+(W-total)/2;
+    items.forEach(it=>{ out.push({txt:it.txt,size:it.size,main:it.main,x:x+it.w/2,y}); x+=it.w+gap; });
+  }
+
+  for(let y=rowH*0.6; y<S*0.985; y+=rowH){
+    // horizontal runs where the whole row is inside the heart
+    const runs=[]; let start=null;
+    for(let x=0;x<=S;x+=2){
+      const ok=inHeart(x,y-rowH*0.45,S)&&inHeart(x,y+rowH*0.45,S);
+      if(ok && start===null) start=x;
+      if((!ok || x+2>S) && start!==null){ runs.push([start,x]); start=null; }
+    }
+    const nearName = Math.abs(y-hole.y) < hole.h/2 + rowH*0.5;
+    runs.forEach(([a,b])=>{
+      a+=base*0.5; b-=base*0.5;
+      if(nearName && b>hole.x0 && a<hole.x1){
+        if(hole.x0-a>base*3) fillSegment(a,hole.x0,y);   // left of the name
+        if(b-hole.x1>base*3) fillSegment(hole.x1,b,y);   // right of the name
+      }else{
+        fillSegment(a,b,y);
+      }
+    });
+  }
+  return out;
+}
+
+function build(){
+  stage.querySelectorAll('.w').forEach(n=>n.remove());
+  const S = stage.clientWidth;
+  const nameSize = S*0.16;
+  measureCtx.font = `700 ${nameSize}px "Playfair Display", Georgia, serif`;
+  const nameW = measureCtx.measureText('Aseel').width;
+
+  const words = computeLayout(S, nameW, nameSize);
+
+  // appear slowly, in random order, so the heart gradually "develops"
+  const order = shuffle(words.map((_,i)=>i));
+  const step = Math.min(0.06, 9/words.length);
+  const delayOf = {}; order.forEach((idx,k)=>delayOf[idx]=0.6+k*step);
+
+  words.forEach((w,i)=>{
+    const el=document.createElement('span');
+    el.className='w'+(w.main?' big':'');
+    el.textContent=w.txt;
+    el.style.left=w.x+'px';
+    el.style.top=w.y+'px';
+    el.style.fontSize=w.size+'px';
+    el.style.setProperty('--c', COLORS[Math.floor(Math.random()*COLORS.length)]);
+    el.style.setProperty('--o', w.main ? 1 : (0.78+Math.random()*0.2).toFixed(2));
+    el.style.setProperty('--d', delayOf[i].toFixed(2)+'s');
+    el.style.setProperty('--t', (5+Math.random()*5).toFixed(1)+'s');
+    stage.appendChild(el);
+  });
+  const total = 0.6+words.length*step;
+  s2.style.setProperty('--nameDelay', (total*0.45).toFixed(1)+'s');
+  s2.style.setProperty('--bottomDelay', (total*0.9).toFixed(1)+'s');
+}
+
+function size(){
+  const S = Math.max(280, Math.min(window.innerWidth*0.98, window.innerHeight-135, 820));
+  document.documentElement.style.setProperty('--S', S+'px');
+  build();
+}
+
+let lastW=window.innerWidth, lastH=window.innerHeight, rt;
+window.addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{
+    if(Math.abs(window.innerWidth-lastW)>40 || Math.abs(window.innerHeight-lastH)>120){
+      lastW=window.innerWidth; lastH=window.innerHeight; size();
+    }
+  },250);
+});
+
+(document.fonts && document.fonts.load ? Promise.all([
+  document.fonts.load('400 16px Quicksand'),
+  document.fonts.load('700 16px Quicksand'),
+  document.fonts.load('700 16px "Playfair Display"')
+]).catch(()=>{}) : Promise.resolve()).then(size);
+
+/* start the heart animation only when the second section is on screen */
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{
+    if(es.some(e=>e.isIntersecting)){ s2.classList.add('in'); io.disconnect(); }
+  },{threshold:0.45});
+  io.observe(s2);
+}else{ s2.classList.add('in'); }
+
+document.getElementById('cue').addEventListener('click',()=>{
+  s2.scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- music ---------- */
+let player, ready=false, muted=true, unlocked=false;
+const muteBtn=document.getElementById('mute');
+const hint=document.getElementById('hint');
+
+const tag=document.createElement('script');
+tag.src="https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
+
+window.onYouTubeIframeAPIReady=function(){
+  player=new YT.Player('yt',{
+    videoId:'wxJ4MN31JFA',
+    playerVars:{autoplay:1,mute:1,playsinline:1,controls:0,loop:1,playlist:'wxJ4MN31JFA',rel:0},
+    events:{
+      onReady:e=>{ready=true; e.target.mute(); e.target.playVideo(); if(unlocked) unmute();},
+      onStateChange:e=>{ if(e.data===YT.PlayerState.ENDED){player.seekTo(0);player.playVideo();} }
+    }
+  });
+};
+
+function unmute(){
+  if(!ready) return;
+  player.unMute(); player.setVolume(100); player.playVideo();
+  muted=false; muteBtn.textContent='🔊'; hint.classList.add('gone');
+}
+const unlockEvents=['click','pointerdown','touchend','keydown'];
+function firstTouch(){
+  unlocked=true; unmute();
+  unlockEvents.forEach(ev=>window.removeEventListener(ev,firstTouch));
+}
+unlockEvents.forEach(ev=>window.addEventListener(ev,firstTouch,{passive:true}));
+
+muteBtn.addEventListener('click',e=>{
+  e.stopPropagation();
+  if(!ready) return;
+  if(muted){ unmute(); }
+  else{ player.mute(); muted=true; muteBtn.textContent='🔇'; }
+});
+</script>
+</body>
+</html>
