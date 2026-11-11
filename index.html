@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aseel ❤</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@300;400;500;600;700&family=Cairo:wght@500;600&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
@@ -106,6 +106,17 @@
   #s2 .bottom b{font-weight:600;color:#ffd0de}
   #s2.in .bottom{animation:soft 3.5s ease var(--bottomDelay) forwards}
 
+  #s2 .made{
+    margin-top:1.2vh;
+    font-family:'Cairo','Quicksand',system-ui,sans-serif;
+    font-weight:600;
+    font-size:clamp(.95rem,2.6vmin,1.25rem);
+    color:#ffd0de;
+    text-shadow:0 0 14px rgba(255,150,185,.45);
+    opacity:0;
+  }
+  #s2.in .made{animation:soft 3.5s ease calc(var(--bottomDelay) + 1.5s) forwards}
+
   #hint{
     position:fixed;left:50%;bottom:12px;transform:translateX(-50%);
     font-size:.72rem;letter-spacing:.14em;color:rgba(255,255,255,.55);
@@ -140,6 +151,7 @@
 <section id="s2">
   <div id="stage"><div id="name">Aseel</div></div>
   <div class="bottom">To day is <b>11-11</b> the 11th day of the 11th month and my wish will always be you</div>
+  <div class="made" dir="rtl">اتعمل عشان حبيبي اللي بحبه وعمري ما هسيبه ♡</div>
 </section>
 
 <script>
@@ -381,7 +393,7 @@ function build(){
 }
 
 function size(){
-  const S = Math.max(280, Math.min(window.innerWidth*0.98, window.innerHeight-135, 820));
+  const S = Math.max(280, Math.min(window.innerWidth*0.98, window.innerHeight-170, 820));
   document.documentElement.style.setProperty('--S', S+'px');
   build();
 }
@@ -426,9 +438,22 @@ document.head.appendChild(tag);
 window.onYouTubeIframeAPIReady=function(){
   player=new YT.Player('yt',{
     videoId:'wxJ4MN31JFA',
-    playerVars:{autoplay:1,mute:1,playsinline:1,controls:0,loop:1,playlist:'wxJ4MN31JFA',rel:0},
+    playerVars:{autoplay:1,mute:0,playsinline:1,controls:0,loop:1,playlist:'wxJ4MN31JFA',rel:0},
     events:{
-      onReady:e=>{ready=true; e.target.mute(); e.target.playVideo(); if(unlocked) unmute();},
+      onReady:e=>{
+        ready=true;
+        e.target.setVolume(100); e.target.unMute(); e.target.playVideo();
+        if(unlocked){ unmute(); return; }
+        setTimeout(()=>{
+          if(unlocked) return;
+          const st=player.getPlayerState();
+          if(st===1||st===3){                       // browser allowed sound
+            muted=false; muteBtn.textContent='🔊'; hint.classList.add('gone');
+          }else{                                    // blocked: play silently, first tap anywhere turns sound on
+            player.mute(); player.playVideo(); muted=true; muteBtn.textContent='🔇';
+          }
+        },1800);
+      },
       onStateChange:e=>{ if(e.data===YT.PlayerState.ENDED){player.seekTo(0);player.playVideo();} }
     }
   });
